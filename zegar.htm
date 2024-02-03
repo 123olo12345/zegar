@@ -1,0 +1,204 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #000;
+      color: #fff;
+    }
+
+    .flip-clock-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .flip-clock {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .flip-divider {
+      font-size: 36px;
+      color: #fff;
+      margin: 0 5px;
+    }
+
+    .flip {
+      display: inline-block;
+      margin: 0 5px;
+      font-size: 10vw; /* Zmiana rozmiaru na podstawie szerokości widoku */
+      font-weight: bold;
+      line-height: 1.2;
+      color: #000;
+      overflow: hidden;
+    }
+
+    .flip div {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      display: inline-block;
+      color: #000;
+      transform-origin: bottom;
+      transition: transform 0.5s;
+    }
+
+    .flipping {
+      transform: translateY(-100%);
+    }
+
+    .date-container {
+      font-size: 5vw; /* Zmiana rozmiaru na podstawie szerokości widoku */
+    }
+  </style>
+</head>
+<body>
+  <div class="flip-clock-container">
+    <div class="flip-clock" id="flip-clock">
+      <div class="flip" id="hours-left">
+        <div><div>1</div></div>
+      </div>
+      <div class="flip" id="hours-right">
+        <div><div>8</div></div>
+      </div>
+      <div class="flip-divider">:</div>
+      <div class="flip" id="minutes-left">
+        <div><div>3</div></div>
+      </div>
+      <div class="flip" id="minutes-right">
+        <div><div>3</div></div>
+      </div>
+      <div class="flip-divider">:</div>
+      <div class="flip" id="seconds-left">
+        <div><div>2</div></div>
+      </div>
+      <div class="flip flipping" id="seconds-right">
+        <div><div>9</div></div>
+      </div>
+    </div>
+
+    <div class="date-container" id="current-date">03.02.2024 Sobota 03 Luty</div>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      updateFlipUnit("hours-left", Math.floor(hours / 10));
+      updateFlipUnit("hours-right", hours % 10);
+      updateFlipUnit("minutes-left", Math.floor(minutes / 10));
+      updateFlipUnit("minutes-right", minutes % 10);
+      updateFlipUnit("seconds-left", Math.floor(seconds / 10));
+      updateFlipUnit("seconds-right", seconds % 10);
+
+      const dayOfMonth = addLeadingZero(now.getDate());
+      const monthNumber = addLeadingZero(now.getMonth() + 1);
+      const monthName = getMonth(now.getMonth());
+      const year = now.getFullYear();
+      const dayOfWeek = getDayOfWeek(now.getDay());
+
+      const currentDate = `${dayOfMonth}.${monthNumber}.${year} ${dayOfWeek} ${dayOfMonth} ${monthName}`;
+      document.getElementById("current-date").innerText = currentDate;
+    }
+
+    function updateFlipUnit(elementId, value) {
+      const element = document.getElementById(elementId).querySelector("div");
+      const currentDigit = element.innerText;
+
+      if (currentDigit !== value.toString()) {
+        element.innerHTML = value.toString().split('').map(digit => `<div>${digit}</div>`).join('');
+        animateFlip(element);
+      }
+    }
+
+    function animateFlip(element) {
+      element.parentElement.classList.add("flipping");
+      setTimeout(() => {
+        element.parentElement.classList.remove("flipping");
+      }, 500);
+    }
+
+    function getDayOfWeek(dayIndex) {
+      const daysOfWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+      return daysOfWeek[dayIndex];
+    }
+
+    function getMonth(monthIndex) {
+      const months = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
+      return months[monthIndex];
+    }
+
+    function addLeadingZero(number) {
+      return number < 10 ? `0${number}` : number;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toggle Full Screen</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    button {
+      margin-top: auto;
+      display: block; /* Dodaj display: block; aby przycisk nie był ukryty domyślnie */
+    }
+  </style>
+
+
+
+  
+
+  <script>
+    const fullScreenButton = document.getElementById('fullScreenButton');
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(hideButton);
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().then(showButton);
+        }
+      }
+    }
+
+    function hideButton() {
+      fullScreenButton.style.display = 'none';
+    }
+
+    function showButton() {
+      fullScreenButton.style.display = 'block';
+    }
+
+    document.addEventListener('fullscreenchange', function () {
+      if (!document.fullscreenElement) {
+        showButton();
+      }
+    });
+  </script>
+
+</body></html>
